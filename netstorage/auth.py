@@ -30,8 +30,8 @@ def acs_auth_sign(key, acs_action, acs_auth_data, path, optional_headers=None):
         page 17
 
     :param key str: (required) API key
-    :param acs_auth_data str: (required) Message to hash. This will be the contents
-        of X-Akamai-ACS-Auth-Data
+    :param acs_auth_data str: (required) Message to hash. This will be the
+        contents of X-Akamai-ACS-Auth-Data
     :param path str: (required): Filesystem path e.g ("/302386")
     :param optional_headers dict: (optional) Optional headers (e.g "md5,
         mtime")
@@ -53,6 +53,7 @@ def build_acs_action(action, xml=True):
     acs_action = acs_action + '&format=xml' if xml else acs_action
     return acs_action
 
+
 def build_optional_headers(headers):
     """
     :param headers dict: (required)
@@ -71,4 +72,3 @@ def build_optional_headers(headers):
     optional_headers = '&'.join(optional_headers)
     optional_headers = '&' + optional_headers
     return optional_headers
-
