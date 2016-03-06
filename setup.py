@@ -14,7 +14,7 @@ with open('netstorage/__init__.py', 'r') as fd:
 
 setup(
     name='netstorage',
-    description='Human friendly netstorage wrapper',
+    description='A python wrapper for Akamais Nestorage API',
     author='Matt Chung',
     author_email='mchung@whalerockindustries.com',
     version=__version__,
