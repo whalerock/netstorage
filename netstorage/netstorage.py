@@ -38,7 +38,7 @@ class Netstorage(object):
     def download(self, path, destination):
         """Download a file from netstorage to local file system."""
         # Remove trailing slash which causes 400 error
-        path= path.rstrip('/')
+        path = path.rstrip('/')
         acs_auth_action = auth.build_acs_action('download', xml=False)
         acs_auth_data = auth.acs_auth_data(self.keyname)
         acs_auth_sign = auth.acs_auth_sign(self.key, acs_auth_action, acs_auth_data, path)
@@ -89,11 +89,8 @@ class Netstorage(object):
 
         url = self._build_url(self.host, path)
         response = self.session.get(url, headers=headers)
-        # TODO: Refactor this into separate methods
-        if response.status_code == 200:
-            return parsers.DirResponse(response.content).parse()
-        else:
-            raise exceptions.NetstorageBadRequest(url)
+        parser = parsers.DirResponse(response.content)
+        return self._parse(response, 200, parser)
 
 
     def _build_url(self, hostname, uri, secure=True):

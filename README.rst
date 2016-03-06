@@ -1,31 +1,71 @@
-Human Friend API to Akamai Netstorage
-=====================================
+netstorage
+==========
 
-Simple API to manage Akamai Netstorage instances
+Netstorage is a simple client library for Akamai's Netstorage API.
 
-..code-block:: python
+To get started, you'll need the following from your account/luna portal.
+
+- Key name
+- Key
+- Hostname
+
+Example Use
+-----------
+
+First you'll need to create a Netstorage instance.
+
+.. code-block:: python
 
     import netstorage
 
     token_name, token, hostname = 'TOKENABC SECRET_TOKEN whalerock-nsu.akamai-hd.net'.split()
     ns = netstorage(token_name, token, hostname)
-    disk_usage = ns.du('/39650')
 
-    remote_file = '/39650/123.txt'
-    destination = '/tmp/'
-
-    # Download a file on netstorage to local filesystem
-    ns.download(remote, destination)
-
-    # Delete a file on netstorage
-    ns.delete(remote)
-
-Listing contents
-----------------
-
-This returns a list of files.
+Disk Usage
+----------
 
 .. code-block:: python
 
-   contents = ns.dir('/396500')
+    disk_usage = ns.du('/39650')
 
+    print disk_usage.files
+    print disk_usage.size
+
+List directory contents
+-----------------------
+
+Retrieve directory contents
+
+.. code-block:: python
+
+   directory_contents = ns.dir('/396500')
+   for item in directory_contents:
+       print '{item.name} | {item.path} | {item.size}'.format(item=item)
+
+Deleting a file
+---------------
+
+.. code-block:: python
+
+   ns.delete('/396500/important.txt')
+
+Downloading a file
+------------------
+
+.. code-block:: python
+
+   ns.download('/396500/very_important.txt', '/tmp/very_important.txt')
+
+   # You can also supply a directory
+   ns.download('/396500/very_important.txt', '/tmp/')
+
+Supported actions
+-----------------
+
+You'll notice that the methods match Akamai's API documentation.  The
+methods that are currrently supported are:
+
+- delete
+- dir
+- download
+- du
