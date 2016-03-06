@@ -2,6 +2,7 @@ from . import auth
 from . import utils
 from . import session
 from . import exceptions
+from . import parsers
 import logging
 
 log = logging.getLogger(__name__)
@@ -97,12 +98,13 @@ class Netstorage(object):
 
         url = self._build_url(self.host, path)
         response = self.session.get(url, headers=headers)
-        # Successful
+        # TODO: Refactor this into separate methods
         if response.status_code == 200:
-            log.info("List directory contents successful.")
-            return response.content
+            return parsers.DirResponse(response.content).parse()
         else:
             raise exceptions.NetstorageBadRequest(url)
+
+
     def _build_url(self, hostname, uri, secure=True):
         """Builds a properly formatted URL.
 
