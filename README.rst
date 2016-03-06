@@ -71,3 +71,15 @@ methods that are currrently supported are:
 - dir
 - download
 - du
+
+Development Guide
+-----------------
+
+To run tests, install `tox` and run `tox`.
+
+Integration tests
+~~~~~~~~~~~~~~~~~
+
+We use `betamax`_ to capture the http/https interactions. We filter out sensitive data such as hostname to the nestorage instance, as well as the `KEY NAME` used in the headers.
+
+.. _betamax: https://github.com/sigmavirus24/betamax
