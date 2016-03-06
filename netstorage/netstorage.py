@@ -80,7 +80,7 @@ class Netstorage(object):
         # File not found
         if response.status_code == 404:
             log.info("File not found {0}".format(path))
-            return True
+            return False
 
     def dir(self, path):
         """List directory contents."""
