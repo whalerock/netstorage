@@ -15,13 +15,11 @@ class Netstorage(object):
         self.keyname = keyname
         self.host = host
         self.session = session.Session()
-        pass
-
 
     def du(self, path):
         """Download a file from netstorage to local file system."""
         # Remove trailing slash which causes 400 error
-        path= path.rstrip('/')
+        path = path.rstrip('/')
         acs_auth_action = auth.build_acs_action('du', xml=True)
         acs_auth_data = auth.acs_auth_data(self.keyname)
         acs_auth_sign = auth.acs_auth_sign(self.key, acs_auth_action, acs_auth_data, path)
@@ -34,7 +32,8 @@ class Netstorage(object):
 
         url = self._build_url(self.host, path)
         response = self.session.get(url, headers=headers)
-        return response
+        parser = parsers.DuResponse(response.content)
+        return self._parse(response, 200, parser)
 
     def download(self, path, destination):
         """Download a file from netstorage to local file system."""
@@ -56,7 +55,6 @@ class Netstorage(object):
         log.info('Created {0}'.format(downloaded))
         return downloaded
 
-
     def delete(self, path):
         """Delete a file on netstorage"""
         # Remove trailing slash which causes 400 error
@@ -73,14 +71,7 @@ class Netstorage(object):
 
         url = self._build_url(self.host, path)
         response = self.session.put(url, headers=headers)
-        # Successful
-        if response.status_code == 200:
-            log.info("Deleted file {0}".format(path))
-            return True
-        # File not found
-        if response.status_code == 404:
-            log.info("File not found {0}".format(path))
-            return False
+        return self._expected_response(response, 200, 404)
 
     def dir(self, path):
         """List directory contents."""
@@ -119,12 +110,17 @@ class Netstorage(object):
         url = '{0}{1}{2}'.format(protocol, hostname, uri)
         return url
 
-    def _expected_response(self, response_code, true_code, false_code):
+    def _expected_response(self, response, true_code, false_code):
         if response_code is None:
-            if response_code == true_code:
+            if response.status_code == true_code:
                 return True
-            if response_code != status_code and response_code >= 400:
-                raise Exception("Bad request.")
+            if response.status_code != false_code and response.status_code >= 400:
+                raise exceptions.raise_exception_for(response)
         return False
 
-
+    @staticmethod
+    def _parse(response, expected_status_code, parser):
+        if response.status_code == expected_status_code:
+            return parser.parse()
+        else:
+            raise exceptions.raise_exception_for(response)
