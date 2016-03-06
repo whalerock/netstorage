@@ -24,6 +24,8 @@ First you'll need to create a Netstorage instance.
 Disk Usage
 ----------
 
+The root directory is usually a `CP CODE`.
+
 .. code-block:: python
 
     disk_usage = ns.du('/39650')
