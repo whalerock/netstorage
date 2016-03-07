@@ -54,6 +54,7 @@ author = u'Matt Chung'
 # built documents.
 #
 # The short X.Y version.
+sys.path.insert(0, os.path.abspath('..'))
 import netstorage
 version = netstorage.__version__
 # The full version, including alpha/beta/rc tags.
