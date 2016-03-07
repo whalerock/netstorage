@@ -1,5 +1,6 @@
 import logging
 import os
+import urllib
 
 log = logging.getLogger(__name__)
 
@@ -23,3 +24,8 @@ def stream_to_file(response, destination):
         for chunk in response.iter_content(chunk_size=512):
             fh.write(chunk)
     return destination
+
+
+def urlencode(path):
+    """URL encode a destination."""
+    return urllib.quote_plus(path)

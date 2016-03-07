@@ -76,7 +76,7 @@ class Netstorage(object):
     def dir(self, path):
         """List directory contents."""
         # Remove trailing slash which causes 400 error
-        path = path.rstrip('/')
+        path = '/' + path.strip('/')
         acs_auth_action = auth.build_acs_action('dir', xml=True)
         acs_auth_data = auth.acs_auth_data(self.keyname)
         acs_auth_sign = auth.acs_auth_sign(self.key, acs_auth_action, acs_auth_data, path)
@@ -92,6 +92,31 @@ class Netstorage(object):
         parser = parsers.DirResponse(response.content)
         return self._parse(response, 200, parser)
 
+    def rename(self, path, destination):
+        """Rename a file on nestorage
+
+        :param path str: path of file to be renamed (e.g "/39650/new.txt")
+        :param destination str: new path (e.g "/39650/old.txt")
+        :returns:
+        """
+        # Remove trailing slash which causes 400 error
+        path = path.rstrip('/')
+        encoded_destination = 'destination={}'.format(utils.urlencode(destination))
+        acs_auth_action = auth.build_acs_action('rename', xml=False)
+        acs_auth_action = '&'.join([acs_auth_action, encoded_destination])
+        acs_auth_data = auth.acs_auth_data(self.keyname)
+        acs_auth_sign = auth.acs_auth_sign(self.key, acs_auth_action, acs_auth_data, path)
+        headers = {
+            'X-Akamai-ACS-Auth-Data': acs_auth_data,
+            'X-Akamai-ACS-Auth-Sign': acs_auth_sign,
+            'X-Akamai-ACS-Action': acs_auth_action.split(':')[1],
+            'Host': self.host
+        }
+
+        url = self._build_url(self.host, path)
+        response = self.session.post(url, headers=headers)
+        expected_response = self._expected_response(response, 200, 404)
+        return expected_response
 
     def _build_url(self, hostname, uri, secure=True):
         """Builds a properly formatted URL.
@@ -108,7 +133,7 @@ class Netstorage(object):
         return url
 
     def _expected_response(self, response, true_code, false_code):
-        if response_code is None:
+        if response.status_code is not None:
             if response.status_code == true_code:
                 return True
             if response.status_code != false_code and response.status_code >= 400:

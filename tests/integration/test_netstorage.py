@@ -42,3 +42,14 @@ class TestNetstorage(helper.IntegrationHelper):
         with self.recorder.use_cassette(cassette_name, **betamax_kwargs):
             with pytest.raises(netstorage.exceptions.ForbiddenError):
                 self.ns.du('/123456')
+
+
+    def test_rename(self):
+        """Test the ability to rename a file."""
+        cassette_name = self.cassette_name('rename')
+        betamax_kwargs = {
+            'match_requests_on': ['akamai-action', 'uri']
+        }
+        with self.recorder.use_cassette(cassette_name, **betamax_kwargs):
+            renamed = self.ns.rename('/415822/new.txt', '/415822/old.txt')
+        assert renamed is True
