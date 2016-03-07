@@ -2,12 +2,10 @@ import datetime as dt
 import os
 
 from .models import NetstorageDiskUsage, NetstorageFile
-from collections import namedtuple
 from lxml import etree
 
 
 class DirResponse(object):
-
 
     def __init__(self, content):
         self.content = content
@@ -31,7 +29,6 @@ class DirResponse(object):
 
 
 class DuResponse(object):
-
 
     def __init__(self, content):
         self.content = content
