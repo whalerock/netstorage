@@ -1,3 +1,4 @@
+from . import exceptions
 import logging
 import os
 import urllib
@@ -18,6 +19,8 @@ def stream_to_file(response, destination):
     :param destination str: (required) Destination to save file
     :returns: `str` file destination
     """
+    if response.status_code != 200:
+        raise exceptions.raise_exception_for(response)
     if os.path.isdir(destination):
         destination = os.path.join(destination, filename_from(response.url))
     with open(destination, 'wb') as fh:
