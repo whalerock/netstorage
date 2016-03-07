@@ -55,6 +55,7 @@ author = u'Matt Chung'
 #
 # The short X.Y version.
 sys.path.insert(0, os.path.abspath('..'))
+autodoc_mock_imports = ['lxml', 'requests']
 import netstorage
 version = netstorage.__version__
 # The full version, including alpha/beta/rc tags.
@@ -283,4 +284,3 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
-autodoc_mock_imports = ['lxml', 'requests']
