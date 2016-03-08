@@ -53,3 +53,14 @@ class TestNetstorage(helper.IntegrationHelper):
         with self.recorder.use_cassette(cassette_name, **betamax_kwargs):
             renamed = self.ns.rename('/415822/new.txt', '/415822/old.txt')
         assert renamed is True
+
+
+    def test_upload(self):
+        """Test the ability to upload a file."""
+        cassette_name = self.cassette_name('upload')
+        betamax_kwargs = {
+            'match_requests_on': ['akamai-action', 'uri']
+        }
+        local = '/tmp/old.txt'
+        with self.recorder.use_cassette(cassette_name, **betamax_kwargs):
+            uploaded = self.ns.upload(local, '/415822/upload.txt')

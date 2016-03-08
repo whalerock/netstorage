@@ -71,7 +71,36 @@ class Netstorage(object):
 
         url = self._build_url(self.host, path)
         response = self.session.put(url, headers=headers)
-        return self._expected_response(response, 200, 404)
+        response.raise_for_status()
+        return
+
+    def upload(self, local, destination):
+        """Upload a local file to nestorage.
+
+        :param local string: (required) Path to local file to upload
+        :param destination string: (required) Destination on netstorage to
+            save file to
+        :returns: None
+        """
+        # Remove trailing slash which causes 400 error
+        path = destination
+        path = '/' + path.strip('/')
+        acs_auth_action = auth.build_acs_action('upload', xml=False)
+        acs_auth_data = auth.acs_auth_data(self.keyname)
+        acs_auth_sign = auth.acs_auth_sign(self.key, acs_auth_action, acs_auth_data, path)
+        headers = {
+            'X-Akamai-ACS-Auth-Data': acs_auth_data,
+            'X-Akamai-ACS-Auth-Sign': acs_auth_sign,
+            'X-Akamai-ACS-Action': acs_auth_action.split(':')[1],
+            'Host': self.host
+        }
+
+        url = self._build_url(self.host, path)
+        with open(local) as fh:
+            data = fh.read()
+        response = self.session.put(url, headers=headers, data=data)
+        response.raise_for_status()
+        return
 
     def dir(self, path):
         """List directory contents."""
