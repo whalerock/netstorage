@@ -2,7 +2,7 @@ import datetime as dt
 import os
 
 from .models import NetstorageDiskUsage, NetstorageFile
-from lxml import etree
+import xml.etree.ElementTree as ET
 
 
 class DirResponse(object):
@@ -11,7 +11,7 @@ class DirResponse(object):
         self.content = content
 
     def parse(self):
-        root = etree.fromstring(self.content)
+        root = ET.fromstring(self.content)
         root_dir = root.get('directory')
         children = root.getchildren()
         files = [self.build_file(root_dir, child) for child in children]
@@ -34,7 +34,7 @@ class DuResponse(object):
         self.content = content
 
     def parse(self):
-        root = etree.fromstring(self.content)
+        root = ET.fromstring(self.content)
         path = root.get('directory')
         # du response only contains a single child
         # <du-info files='14986' bytes='694055850'/>

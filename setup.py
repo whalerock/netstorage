@@ -20,7 +20,6 @@ setup(
     version=__version__,
     packages=['netstorage'],
     install_requires=[
-        'requests[security]',
-        'lxml'
+        'requests[security]'
     ]
 )
