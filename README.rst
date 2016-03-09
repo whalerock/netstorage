@@ -72,6 +72,7 @@ methods that are currrently supported are:
 - download
 - du
 - rename
+- upload
 
 Development Guide
 -----------------
