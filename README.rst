@@ -71,6 +71,7 @@ methods that are currrently supported are:
 - dir
 - download
 - du
+- mkdir
 - rename
 - upload
 

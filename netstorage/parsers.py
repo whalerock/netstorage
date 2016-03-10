@@ -21,7 +21,7 @@ class DirResponse(object):
         name = child.get('name')
         path = os.path.join(root, name)
         filetype = child.get('type')
-        size = int(child.get('size'))
+        size = int(child.get('size')) if child.get('size') else None
         mtime = int(child.get('mtime'))
         mtime = dt.datetime.fromtimestamp(mtime)
         md5 = child.get('md5')

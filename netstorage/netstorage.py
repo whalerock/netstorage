@@ -121,6 +121,25 @@ class Netstorage(object):
         parser = parsers.DirResponse(response.content)
         return self._parse(response, 200, parser)
 
+
+    def mkdir(self, path):
+        """Make a directory specified by path."""
+        # Remove trailing slash which causes 400 error
+        path = '/' + path.strip('/')
+        acs_auth_action = auth.build_acs_action('mkdir', xml=False)
+        acs_auth_data = auth.acs_auth_data(self.keyname)
+        acs_auth_sign = auth.acs_auth_sign(self.key, acs_auth_action, acs_auth_data, path)
+        headers = {
+            'X-Akamai-ACS-Auth-Data': acs_auth_data,
+            'X-Akamai-ACS-Auth-Sign': acs_auth_sign,
+            'X-Akamai-ACS-Action': acs_auth_action.split(':')[1],
+            'Host': self.host
+        }
+
+        url = self._build_url(self.host, path)
+        response = self.session.put(url, headers=headers)
+        self.response_successful(response, 200)
+
     def rename(self, path, destination):
         """Rename a file on nestorage
 
@@ -160,6 +179,10 @@ class Netstorage(object):
         protocol = 'https://' if secure else 'http://'
         url = '{0}{1}{2}'.format(protocol, hostname, uri)
         return url
+
+    def response_successful(self, response, true_code):
+        if response.status_code != true_code:
+            raise exceptions.raise_exception_for(response)
 
     def _expected_response(self, response, true_code, false_code):
         if response.status_code is not None:

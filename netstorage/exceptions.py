@@ -1,12 +1,16 @@
 class NetstorageError(Exception):
 
     def __init__(self, response, *args, **kwargs):
-        super(NetstorageError, self).__init__(response, *args, **kwargs)
-        self.message = kwargs.get('message')
+        super(NetstorageError, self).__init__(response)
+        self.msg = kwargs.get('message')
 
 
 class NotFoundError(NetstorageError):
-    pass
+    def __init__(self, response, *args, **kwargs):
+        message = ('Can occur if the targeted object can not be found in the '
+                   'specified path. Check the path provided and try again')
+
+        super(NotFoundError, self).__init__(response, message=message)
 
 
 class BadRequestError(NetstorageError):
@@ -22,7 +26,7 @@ class ForbiddenError(NetstorageError):
         message = ('The Akamai Edge server has denied access to the call. '
                    'Please verify that the call is properly formatted '
                    'and retry')
-        super(ForbiddenError, self).__init__(response, message)
+        super(ForbiddenError, self).__init__(response, message=message)
 
 
 class NotAcceptableError(NetstorageError):
@@ -56,6 +60,7 @@ class NotImplementedError(NetstorageError):
 class ClientError(NetstorageError):
     pass
 
+
 class ServerError(NetstorageError):
     pass
 
@@ -64,6 +69,7 @@ error_classes = {
     400: BadRequestError,
     401: UnauthorizedError,
     403: ForbiddenError,
+    404: NotFoundError,
     406: NotAcceptableError,
     409: ConflictError,
     412: PreconditionFailedError,

@@ -13,7 +13,7 @@ class TestNetstorage(helper.IntegrationHelper):
             'match_requests_on': ['akamai-action', 'uri']
         }
         with self.recorder.use_cassette(cassette_name, **betamax_kwargs):
-            directory_contents = self.ns.dir('/398030')
+            directory_contents = self.ns.dir('/415822')
 
         assert isinstance(directory_contents, list)
         assert len(directory_contents) > 0
@@ -44,6 +44,16 @@ class TestNetstorage(helper.IntegrationHelper):
                 self.ns.du('/123456')
 
 
+    def test_mkdir(self):
+        """Test the ability to make a directory."""
+        cassette_name = self.cassette_name('mkdir')
+        betamax_kwargs = {
+            'match_requests_on': ['akamai-action', 'uri']
+        }
+        with self.recorder.use_cassette(cassette_name, **betamax_kwargs):
+            response = self.ns.mkdir('/415822/empty_dir')
+
+        assert response is None
     def test_rename(self):
         """Test the ability to rename a file."""
         cassette_name = self.cassette_name('rename')
